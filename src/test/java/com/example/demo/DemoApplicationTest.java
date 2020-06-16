@@ -4,6 +4,8 @@ import com.example.demo.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,6 +21,12 @@ public class DemoApplicationTest {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Test
     public void mySqlTest() {
@@ -37,5 +45,17 @@ public class DemoApplicationTest {
         for (User user : userList) {
             System.out.println("id: " + user.getId() + " name: " + user.getName() + " password: " + user.getPassword());
         }
+    }
+
+    @Test
+    public void testRedis() {
+        redisTemplate.opsForValue().set("name", "Monkey");
+        String name = (String)redisTemplate.opsForValue().get("name");
+        System.out.println(name);
+
+        redisTemplate.delete("name");
+        redisTemplate.opsForValue().set("name", "Michael");
+        name = stringRedisTemplate.opsForValue().get("name");
+        System.out.println(name);
     }
 }
